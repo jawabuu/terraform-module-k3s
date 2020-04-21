@@ -1,6 +1,8 @@
 locals {
   server_default_flags = [
     "--node-ip ${var.server_node.ip}",
+    "--tls-san ${var.server_node.ip}",
+    "--node-external-ip ${var.server_node.external_ip}",
     "--node-name ${var.server_node.name}",
     "--cluster-domain ${var.cluster_name}",
     "--cluster-cidr ${var.cluster_cidr.pods}",

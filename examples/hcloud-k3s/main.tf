@@ -1,4 +1,6 @@
-provider hcloud {}
+provider hcloud {
+  token = var.hcloud_token
+}
 
 module k3s {
   source = "./../.."
@@ -12,19 +14,22 @@ module k3s {
 
   additional_flags = {
     server = [
-      "--disable-cloud-controller",
+      #"--disable-cloud-controller",
+      "--disable traefik",
       "--flannel-iface ens10",
-      "--kubelet-arg cloud-provider=external" # required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
+      "--flannel-backend=ipsec",
+      #"--kubelet-arg cloud-provider=external" # required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
     ]
     agent = [
       "--flannel-iface ens10",
-      "--kubelet-arg cloud-provider=external" # required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
     ]
   }
 
   server_node = {
     name   = "server"
-    ip     = hcloud_server_network.server_network.ip
+    #name     = hcloud_server_network.server_network.ip 
+    ip     = hcloud_server_network.server_network.ip    
+    external_ip = hcloud_server.server.ipv4_address
     labels = {}
     taints = {}
     connection = {
@@ -36,13 +41,14 @@ module k3s {
     for i in range(length(hcloud_server.agents)) :
     "${hcloud_server.agents[i].name}_node" => {
       name = "${hcloud_server.agents[i].name}"
+      #name   = hcloud_server_network.agents_network[i].ip
       ip   = hcloud_server_network.agents_network[i].ip
-
+      external_ip = hcloud_server.agents[i].ipv4_address
       labels = {
         "node.kubernetes.io/pool" = hcloud_server.agents[i].labels.nodepool
       }
       taints = {
-        "dedicated" : hcloud_server.agents[i].labels.nodepool == "gpu" ? "gpu:NoSchedule" : null
+      #  "dedicated" : hcloud_server.agents[i].labels.nodepool == "gpu" ? "gpu:NoSchedule" : null
       }
 
       connection = {

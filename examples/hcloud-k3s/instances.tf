@@ -1,7 +1,7 @@
-resource hcloud_ssh_key default {
-  name       = "K3S terraform module - Provisionning SSH key"
-  public_key = var.ssh_key
-}
+#resource hcloud_ssh_key default {
+#  name       = "K3S terraform module - Provisionning SSH key"
+#  public_key = var.ssh_key
+#}
 
 resource hcloud_network k3s {
   name     = "k3s-network"
@@ -25,9 +25,12 @@ resource hcloud_server server {
   image       = data.hcloud_image.ubuntu.name
   server_type = "cx11-ceph"
 
-  ssh_keys = [
-    hcloud_ssh_key.default.id
-  ]
+  #ssh_keys = [
+  #  hcloud_ssh_key.default.id
+  #]
+  # Use predefined key
+  ssh_keys    = var.hcloud_ssh_keys
+  
   labels = {
     provisioner = "terraform",
     engine      = "k3s",
@@ -48,9 +51,11 @@ resource hcloud_server agents {
   image       = data.hcloud_image.ubuntu.name
   server_type = "cx11-ceph"
 
-  ssh_keys = [
-    hcloud_ssh_key.default.id
-  ]
+  #ssh_keys = [
+  #  hcloud_ssh_key.default.id
+  #]
+  # Use predefined key
+  ssh_keys    = var.hcloud_ssh_keys
   labels = {
     provisioner = "terraform",
     engine      = "k3s",
