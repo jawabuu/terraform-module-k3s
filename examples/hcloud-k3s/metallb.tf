@@ -12,10 +12,10 @@ resource "null_resource" "metallb" {
     environment = {
       KUBECONFIG = "./.kubeconfig/k3s.yaml"
     }
-    command = "kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.3/manifests/metallb.yaml"
+    command = "kubectl apply -f ./metallb.yaml"
   }
   provisioner "local-exec" {
-    command = "kubectl delete -f https://raw.githubusercontent.com/google/metallb/v0.8.3/manifests/metallb.yaml --kubeconfig=./.kubeconfig/k3s.yaml"
+    command = "kubectl delete -f ./metallb.yaml --kubeconfig=./.kubeconfig/k3s.yaml"
     when = destroy
     on_failure = continue
   }

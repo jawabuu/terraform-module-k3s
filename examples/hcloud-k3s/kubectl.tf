@@ -5,6 +5,7 @@ resource null_resource kubeconfig {
   triggers = {
     cluster_master_ids = "${join(",", hcloud_server.server.*.id)}"
     cluster_agent_ids = "${join(",", hcloud_server.agents.*.id)}"
+    always_run = "${timestamp()}"
   }  
   
   provisioner "local-exec" {

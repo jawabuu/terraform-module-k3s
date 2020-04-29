@@ -102,12 +102,19 @@ resource null_resource k3s_server_installer {
     content     = data.http.k3s_installer.body
     destination = "/tmp/k3s-installer"
   }
+  
+  # Upload calico.yaml
+  provisioner file {
+    source      = "${path.module}/calico.yaml"
+    destination = "/tmp/calico.yaml"
+  }
 
   # Install K3S server
   provisioner "remote-exec" {
     inline = [
       "INSTALL_K3S_VERSION=${local.k3s_version} sh /tmp/k3s-installer ${local.server_install_flags}",
-      "until kubectl get nodes | grep -v '[WARN] No resources found'; do sleep 1; done"
+      "until kubectl get nodes | grep -v '[WARN] No resources found'; do sleep 1; done",
+      "kubectl apply -f /tmp/calico.yaml"
     ]
   }
 }

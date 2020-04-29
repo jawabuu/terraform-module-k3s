@@ -16,12 +16,13 @@ module k3s {
     server = [
       #"--disable-cloud-controller",
       "--disable traefik",
-      "--flannel-iface ens10",
-      "--flannel-backend=ipsec",
+      "--disable servicelb",
+      #"--flannel-iface ens10",
+      "--flannel-backend=none",
       #"--kubelet-arg cloud-provider=external" # required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
     ]
     agent = [
-      "--flannel-iface ens10",
+      #"--flannel-iface ens10",
     ]
   }
 
