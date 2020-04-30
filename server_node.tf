@@ -114,7 +114,7 @@ resource null_resource k3s_server_installer {
     inline = [
       "INSTALL_K3S_VERSION=${local.k3s_version} sh /tmp/k3s-installer ${local.server_install_flags}",
       "until kubectl get nodes | grep -v '[WARN] No resources found'; do sleep 1; done",
-      "kubectl apply -f /tmp/calico.yaml"
+      #"kubectl apply -f /tmp/calico.yaml"
     ]
   }
 }
