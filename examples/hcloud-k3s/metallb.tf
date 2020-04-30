@@ -6,6 +6,7 @@ resource "null_resource" "metallb" {
   triggers = {
     cluster_master_ids = "${join(",", hcloud_server.server.*.id)}"
     cluster_agent_ids = "${join(",", hcloud_server.agents.*.id)}"
+    #k3s_ip = hcloud_floating_ip.k3s.id
   }  
   
   provisioner "local-exec" {

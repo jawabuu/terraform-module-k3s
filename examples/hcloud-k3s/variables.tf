@@ -22,3 +22,7 @@ variable hcloud_ssh_keys {
 variable install_cloud_controller {
   default = true
 }
+
+variable install_fip_controller {
+  default = true
+}

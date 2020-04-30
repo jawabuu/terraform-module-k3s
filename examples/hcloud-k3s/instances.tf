@@ -70,3 +70,9 @@ resource hcloud_server_network agents_network {
   network_id = hcloud_network.k3s.id
   ip         = cidrhost(hcloud_network_subnet.k3s_nodes.ip_range, count.index + 2)
 }
+
+resource "hcloud_floating_ip" "k3s" {
+  count = var.install_fip_controller ? 1 : 0
+  type = "ipv4"
+  home_location = "hel1"
+}

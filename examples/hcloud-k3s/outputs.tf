@@ -13,5 +13,7 @@ output "k3s_cluster" {
               user     = "root"
           }
       ]
+      
+      k3s_ip = hcloud_floating_ip.k3s.*.ip_address
   }
 }
