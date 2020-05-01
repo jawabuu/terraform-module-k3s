@@ -24,7 +24,7 @@ resource null_resource install_cloud_controller {
   
   # Install Hetzner Cloud Controller
   provisioner "local-exec" {
-    command = "kubectl apply -f  https://raw.githubusercontent.com/hetznercloud/hcloud-cloud-controller-manager/master/deploy/v1.5.1.yaml"
+    command = "kubectl apply -f  ./hcloud-controller.yaml
   }
     
   # Install Flannel Plugin
@@ -54,7 +54,7 @@ EOT
   
   # Install Hetzner CSI Controller
   provisioner "local-exec" {
-    command = "kubectl apply -f  https://raw.githubusercontent.com/hetznercloud/csi-driver/master/deploy/kubernetes/hcloud-csi.yml"
+    command = "kubectl apply -f  ./hcloud-csi.yaml"
   }
   
   
