@@ -109,7 +109,8 @@ resource null_resource k3s_agents_installer {
 INSTALL_K3S_VERSION=${local.k3s_version} INSTALL_K3S_EXEC=agent sh /tmp/k3s-installer ${local.agent_install_flags} \
 ${join(" ", [for label, value in each.value.labels : "--node-label '${label}=${value}'" if value != null])} \
 ${join(" ", [for key, taint in each.value.taints : "--node-taint '${key}=${taint}'" if taint != null])} \
---node-ip ${each.value.ip} --node-name ${each.value.name} --node-external-ip ${each.value.external_ip}
+--node-ip ${each.value.ip} --node-name ${each.value.name} --node-external-ip ${each.value.external_ip} \
+--kubelet-arg=provider-id=hcloud://${each.value.id}
       EOT
     ]
   }

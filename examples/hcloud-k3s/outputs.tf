@@ -4,6 +4,7 @@ output "k3s_cluster" {
           ip       = hcloud_server.server.ipv4_address
           hostname = hcloud_server.server.name
           user     = "root"
+          server   = hcloud_server.server
       }
 
       workers = [
@@ -11,6 +12,7 @@ output "k3s_cluster" {
               ip       = host.ipv4_address
               hostname = host.name
               user     = "root"
+              agent    = host
           }
       ]
       

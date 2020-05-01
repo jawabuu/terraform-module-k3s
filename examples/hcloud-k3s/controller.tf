@@ -28,9 +28,9 @@ resource null_resource install_cloud_controller {
   }
     
   # Install Flannel Plugin
-  provisioner "local-exec" {
-    command = "kubectl apply -f  https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
-  }
+  #provisioner "local-exec" {
+  #  command = "kubectl apply -f  https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
+  #}
    
   # Patch system critical pods
     provisioner "local-exec" {
@@ -38,9 +38,13 @@ resource null_resource install_cloud_controller {
     command = <<EOT
       
     kubectl -n kube-system \
-    patch daemonset kube-flannel-ds-amd64 \
+    patch daemonset calico-node \
     --type json -p '[{"op":"add","path":"/spec/template/spec/tolerations/-","value":{"key":"node.cloudprovider.kubernetes.io/uninitialized","value":"true","effect":"NoSchedule"}}]'
     
+    kubectl -n kube-system \
+    patch deployment calico-kube-controllers \
+    --type json -p '[{"op":"add","path":"/spec/template/spec/tolerations/-","value":{"key":"node.cloudprovider.kubernetes.io/uninitialized","value":"true","effect":"NoSchedule"}}]'
+        
     kubectl -n kube-system \
     patch deployment coredns \
     --type json -p '[{"op":"add","path":"/spec/template/spec/tolerations/-","value":{"key":"node.cloudprovider.kubernetes.io/uninitialized","value":"true","effect":"NoSchedule"}}]'

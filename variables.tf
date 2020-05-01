@@ -45,6 +45,7 @@ variable server_node {
   type = object({
     name       = string
     ip         = string
+    id         = string
     external_ip  = string
     labels     = map(string)
     taints     = map(string)
@@ -56,6 +57,7 @@ variable agent_nodes {
   description = "K3s agent nodes definitions. The key is used as node name during the k3s installation."
   type = map(object({
     name       = string
+    id         = string
     ip         = string
     external_ip  = string
     labels     = map(string)
@@ -63,4 +65,9 @@ variable agent_nodes {
     connection = map(any)
   }))
   default = {}
+}
+
+variable install_calico{
+  description = "Use calico as CNI."
+  default = true
 }

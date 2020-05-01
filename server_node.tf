@@ -2,6 +2,7 @@ locals {
   server_default_flags = [
     "--node-ip ${var.server_node.ip}",
     "--tls-san ${var.server_node.ip}",
+    "--kubelet-arg=provider-id=hcloud://${var.server_node.id}",
     "--node-external-ip ${var.server_node.external_ip}",
     "--node-name ${var.server_node.name}",
     "--cluster-domain ${var.cluster_name}",
@@ -114,7 +115,7 @@ resource null_resource k3s_server_installer {
     inline = [
       "INSTALL_K3S_VERSION=${local.k3s_version} sh /tmp/k3s-installer ${local.server_install_flags}",
       "until kubectl get nodes | grep -v '[WARN] No resources found'; do sleep 1; done",
-      "kubectl apply -f /tmp/calico.yaml"
+      var.install_calico ? "kubectl apply -f /tmp/calico.yaml" : "pwd"
     ]
   }
 }

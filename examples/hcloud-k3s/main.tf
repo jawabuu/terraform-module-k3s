@@ -6,6 +6,7 @@ module k3s {
   source = "./../.."
 
   k3s_version = "latest"
+  install_calico = true
   cluster_cidr = {
     pods     = "10.42.0.0/16"
     services = "10.43.0.0/16"
@@ -14,21 +15,22 @@ module k3s {
 
   additional_flags = {
     server = [
-      #"--disable-cloud-controller",
       "--disable traefik",
-      #"--disable servicelb",
-      #"--flannel-iface ens10",
-      "--flannel-backend=none",
-      #"--kubelet-arg cloud-provider=external" # required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
+      var.install_calico ? "--disable servicelb" : "--flannel-iface ens10",
+      var.install_calico ? "--flannel-backend=none" : "--flannel-iface ens10",
+      var.install_cloud_controller ? "--disable-cloud-controller" : "",
+      var.install_cloud_controller ? "--kubelet-arg=cloud-provider=external" : ""
+      #"--kubelet-arg=cloud-provider=external" # required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
     ]
     agent = [
-      #"--flannel-iface ens10",
+      var.install_calico ? "" : "--flannel-iface ens10",
+      var.install_cloud_controller ? "--kubelet-arg=cloud-provider=external" : ""
     ]
   }
 
   server_node = {
     name   = "server"
-    #name     = hcloud_server_network.server_network.ip 
+    id     = hcloud_server.server.id 
     ip     = hcloud_server_network.server_network.ip    
     external_ip = hcloud_server.server.ipv4_address
     labels = {}
@@ -42,7 +44,7 @@ module k3s {
     for i in range(length(hcloud_server.agents)) :
     "${hcloud_server.agents[i].name}_node" => {
       name = "${hcloud_server.agents[i].name}"
-      #name   = hcloud_server_network.agents_network[i].ip
+      id   = hcloud_server.agents[i].id
       ip   = hcloud_server_network.agents_network[i].ip
       external_ip = hcloud_server.agents[i].ipv4_address
       labels = {

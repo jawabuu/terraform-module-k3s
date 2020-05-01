@@ -26,3 +26,7 @@ variable install_cloud_controller {
 variable install_fip_controller {
   default = true
 }
+
+variable install_calico{
+  default = true
+}
