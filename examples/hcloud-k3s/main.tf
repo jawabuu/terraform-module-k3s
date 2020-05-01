@@ -16,7 +16,7 @@ module k3s {
     server = [
       #"--disable-cloud-controller",
       "--disable traefik",
-      "--disable servicelb",
+      #"--disable servicelb",
       #"--flannel-iface ens10",
       "--flannel-backend=none",
       #"--kubelet-arg cloud-provider=external" # required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
