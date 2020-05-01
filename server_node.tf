@@ -1,7 +1,9 @@
 locals {
   server_default_flags = [
-    "--node-ip ${var.server_node.ip}",
+    "--node-ip ${var.server_node.external_ip}",
     "--tls-san ${var.server_node.ip}",
+    "--tls-san ${var.server_node.external_ip}",
+    "--tls-san ${var.server_node.name}",
     "--kubelet-arg=provider-id=hcloud://${var.server_node.id}",
     "--node-external-ip ${var.server_node.external_ip}",
     "--node-name ${var.server_node.name}",

@@ -59,16 +59,17 @@ resource "null_resource" "fip_config" {
   ]
   count  = var.install_fip_controller ? 1 : 0
   triggers = {
-    metallb_config = md5(local_file.fip_config.content)
+    fip_config = md5(local_file.fip_config.content)
+    always_run     = var.install_fip_controller ? "${timestamp()}" : 0
   }
   provisioner "local-exec" {
     environment = {
       KUBECONFIG = "./.kubeconfig/k3s.yaml"
     }
-    command = "kubectl apply -f ${local_file.fip_config.filename}"
+    command = "echo '--Installing fip_config--' && kubectl apply -f ${local_file.fip_config.filename}"
   }
   provisioner "local-exec" {
-    command = "kubectl delete -n fip-controller configmap config --kubeconfig=./.kubeconfig/k3s.yaml"
+    command = "kubectl delete -n fip-controller configmap fip-controller-config --kubeconfig=./.kubeconfig/k3s.yaml"
     when = destroy
     on_failure = continue
   }
@@ -81,7 +82,7 @@ resource "local_file" "floating_ip_cfg" {
   ]
   count  = var.install_fip_controller ? 1 : 0
   
-  filename = "${path.module}/60-floating-ip.cfg"
+  filename = "${path.module}/60-my-floating-ip.cfg"
   content = <<TXT
 %{ for key, fip in tolist(hcloud_floating_ip.k3s) }
 auto eth0:${key + 1}
@@ -109,8 +110,8 @@ resource "null_resource" "install_ip_cfg_master" {
     
   
   provisioner "file" {
-    source      = "./60-floating-ip.cfg"
-    destination = "/etc/network/interfaces.d/60-floating-ip.cfg"
+    source      = "./60-my-floating-ip.cfg"
+    destination = "/etc/network/interfaces.d/60-my-floating-ip.cfg"
   }
   
   provisioner "remote-exec" {
@@ -138,13 +139,14 @@ resource "null_resource" "install_ip_cfg_agents" {
     
   
   provisioner "file" {
-    source      = "./60-floating-ip.cfg"
-    destination = "/etc/network/interfaces.d/60-floating-ip.cfg"
+    source      = "./60-my-floating-ip.cfg"
+    destination = "/etc/network/interfaces.d/60-my-floating-ip.cfg"
   }
   
   provisioner "remote-exec" {
     inline = [
       "sudo systemctl restart networking.service",
+      "sudo service networking restart"
     ]
   }
 }

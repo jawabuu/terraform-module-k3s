@@ -29,7 +29,7 @@ module k3s {
   }
 
   server_node = {
-    name   = "server"
+    name   = hcloud_server.server.name
     id     = hcloud_server.server.id 
     ip     = hcloud_server_network.server_network.ip    
     external_ip = hcloud_server.server.ipv4_address

@@ -6,7 +6,6 @@ resource "null_resource" "metallb" {
   triggers = {
     cluster_master_ids = "${join(",", hcloud_server.server.*.id)}"
     cluster_agent_ids = "${join(",", hcloud_server.agents.*.id)}"
-    #k3s_ip = hcloud_floating_ip.k3s.*.id
   }  
   
   provisioner "local-exec" {
@@ -40,6 +39,7 @@ data:
       protocol: layer2
       avoid-buggy-ips: true
       addresses:
+      - ${hcloud_server.server.ipv4_address}/32
       - ${var.install_fip_controller ? hcloud_floating_ip.k3s[0].ip_address : hcloud_server.server.ipv4_address}/32
     #- name: backup
     #  protocol: layer2
