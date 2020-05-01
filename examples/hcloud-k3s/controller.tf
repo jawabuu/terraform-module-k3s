@@ -24,7 +24,7 @@ resource null_resource install_cloud_controller {
   
   # Install Hetzner Cloud Controller
   provisioner "local-exec" {
-    command = "kubectl apply -f  ./hcloud-controller.yaml
+    command = "kubectl apply -f  ./hcloud-controller.yaml"
   }
     
   # Install Flannel Plugin
@@ -52,9 +52,14 @@ resource null_resource install_cloud_controller {
 EOT
   }
   
-  # Install Hetzner CSI Controller
+  # Install Hetzner CSI Controller  
   provisioner "local-exec" {
-    command = "kubectl apply -f  ./hcloud-csi.yaml"
+    interpreter = [ "bash", "-c" ]
+    command = <<EOT
+      kubectl apply -f  ./hcloud-csi.yaml
+      #"kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'",
+      #"kubectl patch storageclass hcloud-volumes -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'",
+    EOT
   }
   
   
