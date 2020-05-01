@@ -12,7 +12,7 @@ resource "null_resource" "metallb" {
     environment = {
       KUBECONFIG = "./.kubeconfig/k3s.yaml"
     }
-    command = "kubectl apply -f ./metallb.yaml"
+    command = "kubectl apply -f ./metallb.yaml && kubectl apply -f ./net-tools.yaml"
   }
   provisioner "local-exec" {
     command = "kubectl delete -f ./metallb.yaml --kubeconfig=./.kubeconfig/k3s.yaml"
