@@ -76,3 +76,9 @@ resource "hcloud_floating_ip" "k3s" {
   type = "ipv4"
   home_location = "hel1"
 }
+
+resource "hcloud_floating_ip_assignment" "k3s" {
+  count = var.install_fip_controller ? 1 : 0
+  floating_ip_id = hcloud_floating_ip.k3s[0].id
+  server_id = hcloud_server.server.id
+}

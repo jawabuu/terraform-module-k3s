@@ -40,7 +40,7 @@ data:
       avoid-buggy-ips: true
       addresses:
       - ${hcloud_server.server.ipv4_address}/32
-      - ${var.install_fip_controller ? hcloud_floating_ip.k3s[0].ip_address : hcloud_server.server.ipv4_address}/32
+      #- ${var.install_fip_controller ? hcloud_floating_ip.k3s[0].ip_address : hcloud_server.server.ipv4_address}/32
     #- name: backup
     #  protocol: layer2
     #  avoid-buggy-ips: true      
