@@ -58,6 +58,7 @@ resource "null_resource" "fip_config" {
     null_resource.fip
   ]
   count  = var.install_fip_controller ? 1 : 0
+  
   triggers = {
     fip_config = md5(local_file.fip_config.content)
     always_run     = var.install_fip_controller ? "${timestamp()}" : 0
@@ -88,6 +89,7 @@ resource "local_file" "floating_ip_cfg" {
 auto eth0:${key + 1}
 iface eth0:${key + 1} inet static
   address ${fip.ip_address}
+  broadcast ${fip.ip_address}
   netmask 32 %{ endfor }
 TXT
   }
@@ -98,8 +100,7 @@ resource "null_resource" "install_ip_cfg_master" {
     null_resource.fip,
     hcloud_server.server
   ]
-  count  = var.install_fip_controller ? 1 : 0  
-  
+  count  = var.install_fip_controller ? 1 : 0
   triggers = {
     floating_ip_config = md5(join(",",local_file.floating_ip_cfg.*.content))
   }
@@ -117,6 +118,7 @@ resource "null_resource" "install_ip_cfg_master" {
   provisioner "remote-exec" {
     inline = [
       "sudo systemctl restart networking.service",
+      "sudo service networking restart"
     ]
   }
 }

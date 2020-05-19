@@ -25,7 +25,7 @@ spec:
         args: ["sh", "-c", "sleep 100000"]
         resources:
           requests:
-            cpu: "30m"
+            cpu: "10m"
       restartPolicy: Always
       affinity:
         nodeAffinity:

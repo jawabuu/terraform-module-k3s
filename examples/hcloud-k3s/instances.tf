@@ -19,17 +19,22 @@ data hcloud_image ubuntu {
   name = "ubuntu-18.04"
 }
 
+data local_file cloudinit {
+  filename = "cloud-init.yml"
+}
+
 resource hcloud_server server {
   name = "k3s-server"
 
   image       = data.hcloud_image.ubuntu.name
-  server_type = "cx11-ceph"
+  server_type = "cx11"
 
   #ssh_keys = [
   #  hcloud_ssh_key.default.id
   #]
   # Use predefined key
   ssh_keys    = var.hcloud_ssh_keys
+  user_data   = data.local_file.cloudinit.content
   
   labels = {
     provisioner = "terraform",
@@ -49,11 +54,10 @@ resource hcloud_server agents {
   name  = "k3s-agent-${count.index}"
 
   image       = data.hcloud_image.ubuntu.name
-  server_type = "cx11-ceph"
+  server_type = "cx11"
 
-  #ssh_keys = [
-  #  hcloud_ssh_key.default.id
-  #]
+  user_data   = data.local_file.cloudinit.content
+  
   # Use predefined key
   ssh_keys    = var.hcloud_ssh_keys
   labels = {
@@ -78,7 +82,7 @@ resource "hcloud_floating_ip" "k3s" {
 }
 
 resource "hcloud_floating_ip_assignment" "k3s" {
-  count = var.install_fip_controller ? 1 : 0
+  count = var.install_fip_controller ? 0 : 0
   floating_ip_id = hcloud_floating_ip.k3s[0].id
   server_id = hcloud_server.server.id
 }
