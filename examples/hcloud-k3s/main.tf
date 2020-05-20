@@ -3,9 +3,10 @@ provider hcloud {
 }
 
 module k3s {
-  source = "./../.."
+  #source = "./../.."
+  source = "./modules/k3s"
 
-  k3s_version = "latest"
+  k3s_version = "v1.17.5+k3s1"
   install_calico = true
   cluster_cidr = {
     pods     = "10.42.0.0/16"
